@@ -10,7 +10,7 @@ def cargarArchivo():
 
 def main():
     print("LABECOIN")
-    tablero = cargarArchivo()
+    labecoin = cargarArchivo()
 
 
     # Source: https://stackoverflow.com/questions/47432043
@@ -24,7 +24,9 @@ def main():
         case 2:
             print("Aqui falta Maxima pendiente")
     
-    print(heur.localizarObjetivo(tablero, 7))
-
+    posRobot=heur.localizarObjetivo(labecoin, 7)
+    tablero = heur.tablero(0, posRobot[0],posRobot[1], labecoin)
     
+    heur.moverArriba(tablero)
+    print(tablero)
 main()
