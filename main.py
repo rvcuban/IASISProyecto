@@ -1,36 +1,16 @@
 
-
-
+import numpy as np
+import FuncionesHeuristica as heur
 def cargarArchivo():
-    fichero = input("Inserte la ruta del fichero a resolver")
-    fp=open(fichero, 'r')
-    lines = fp.readlines().remove()
-    tablero = []
-    for linea in lines:
-        tablero.append(linea.split(","))
+    with open('LABECOIN1.txt','r') as f:
+        datos = ''.join(f.readlines()).replace('\n',';')
+    m = np.matrix(datos)
 
-    #datos =''.join(f.readlines()).replace('\n',';')
-    #tablero = 
-    fp.close()
-
-   
-
-
-
-
-
-
-
-
-#Source: https://stackoverflow.com/questions/510049
-
-
-
-
+    return m
 
 def main():
     print("LABECOIN")
-    cargarArchivo()
+    tablero = cargarArchivo()
 
 
     # Source: https://stackoverflow.com/questions/47432043
@@ -43,6 +23,8 @@ def main():
             escaladaSimple()
         case 2:
             print("Aqui falta Maxima pendiente")
+    
+    print(heur.localizarObjetivo(tablero, 7))
 
-
+    
 main()
