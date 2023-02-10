@@ -11,7 +11,7 @@ def localizarObjetivo(tablero, num):
 class Tablero:
     """esta es la clase tablero que almacenara toda la infomracion del juego"""
 
-    def __init__(self, monedas, posicionRobotX, posicionRobotY, table):
+    def __init__(self, monedas, posicionRobotX, posicionRobotY, table, salida):
         if not monedas:
             return None
         self.monedas = monedas
@@ -21,10 +21,22 @@ class Tablero:
 
         # agregado
         self.monedasRecogidas = 0
+        self.salida = salida
 
     def __str__(self) -> str:
         return f"Numero de monedas:{self.monedas} en el tablero\n {self.table}\n posicion del robot:{self.posicionRobotX,self.posicionRobotY}\n el numero de monedas recogidas actualmente es {self.monedasRecogidas}"
 
+
+def obtMonedasTab(tablero):
+    listaMonedas=[]
+    dim = len(tablero)  # Es una matriz cuadrada N x N
+    print(tablero[1,1])
+    for i in range(0, dim):  # columna
+        for j in range(0, dim):  # fila
+            if (tablero[i,j]>=1) and (tablero[i,j]<7):
+                posicion=i,j
+                listaMonedas.append(posicion)
+    return listaMonedas
 
 def movValid(tablero: Tablero, x, y):
     if tablero.table[x, y] != 9:
@@ -147,3 +159,7 @@ def moverArriba(tablero):
         tablero.table[posRobotX][posRobotY - 1] = 8
         tablero.table[posRobotX][posRobotY] = 0
         return tablero
+
+
+def DistanciaManhatan():
+    print("EN CONSTRUCCION")

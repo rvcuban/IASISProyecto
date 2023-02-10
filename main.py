@@ -17,6 +17,8 @@ def main():
     print(f"El numero de monedas es {monedas}")
     print(labecoin)
     posRobot=heur.localizarObjetivo(labecoin, 8) 
+    salida =heur.localizarObjetivo(labecoin,7)
+    coordMonedas= heur.obtMonedasTab(labecoin)
     # Source: https://stackoverflow.com/questions/47432043
 
     print("¿Con que algoritmo quieres resolver el puzzle?")
@@ -30,14 +32,15 @@ def main():
     
     
     
-    tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin)
+    tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida)
     
     heur.move_up(tablero)
     heur.move_right(tablero)
     heur.move_up(tablero)
     heur.move_right(tablero)
     heur.move_right(tablero)
+ 
     print(tablero)
-
+    print(coordMonedas)
   
 main()
