@@ -11,7 +11,7 @@ def localizarObjetivo(tablero, num):
 class Tablero:
     """esta es la clase tablero que almacenara toda la infomracion del juego"""
 
-    def __init__(self, monedas, posicionRobotX, posicionRobotY, table, salida):
+    def __init__(self, monedas, posicionRobotX, posicionRobotY, table, salida,coordMonedas):
         if not monedas:
             return None
         self.monedas = monedas
@@ -20,8 +20,9 @@ class Tablero:
         self.table = table
 
         # agregado
-        self.monedasRecogidas = 0
+        self.monedasRecogidas = 0 # contador con monedas recogidas hasta el momento dentro del tablero
         self.salida = salida
+        self.coordMonedas= coordMonedas #lista de las coordenadas de las monedas dentro de la matriz 
 
     def __str__(self) -> str:
         return f"Numero de monedas:{self.monedas} en el tablero\n {self.table}\n posicion del robot:{self.posicionRobotX,self.posicionRobotY}\n el numero de monedas recogidas actualmente es {self.monedasRecogidas}"
@@ -161,5 +162,11 @@ def moverArriba(tablero):
         return tablero
 
 
-def DistanciaManhatan():
+def DistanciaManhatan(tablero:Tablero):
     print("EN CONSTRUCCION")
+    
+
+     #la distancia de manjatan nos dice que la distancia entre 2 putnos con coordenadas 
+     #siendo p(x,y) y q(r,s) la distancia d se calcula (d(p,q))=raiz( (r-x)^2+(s-y)^2)
+     #para nosotros sera la distancia del robot p a la moneda .quedando asi= d(r,m)=raiz(moneda[x]-robotX)^2+(mondeda[y]-robot`[y]^2)
+    valor = valor+abs(tablero.posicionRobotX)

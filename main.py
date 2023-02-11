@@ -32,7 +32,7 @@ def main():
     
     
     
-    tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida)
+    tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida,coordMonedas)
     
     heur.move_up(tablero)
     heur.move_right(tablero)
