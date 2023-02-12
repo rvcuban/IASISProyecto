@@ -1,5 +1,6 @@
 import numpy as np
 import FuncionesHeuristica as heur
+import BFS
 def cargarArchivo():       #falta lanzar error en caso de que el archivo no exista o no este en la carpeta 
     with open('LABECOIN1.txt','r') as f:
         monedas=next(f)
@@ -19,28 +20,22 @@ def main():
     posRobot=heur.localizarObjetivo(labecoin, 8) 
     salida =heur.localizarObjetivo(labecoin,7)
     coordMonedas= heur.obtMonedasTab(labecoin)
+    tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida,coordMonedas,0,[])
+    tablero.h = heur.DistanciaManhatan(tablero)
+
     # Source: https://stackoverflow.com/questions/47432043
 
     print("¿Con que algoritmo quieres resolver el puzzle?")
-    opcion = input("1-Escalada simple. \n 2-Maxima pendiente \n")
+    opcion = input("1-Escalada simple.\n2-Maxima pendiente \n 3-BFS")
 
-    match opcion:
+    match int(opcion):
         case 1:
             escaladaSimple()
         case 2:
             print("Aqui falta Maxima pendiente")
+        case 3:
+            BFS.BFS(tablero)
     
-    
-    
-    tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida,coordMonedas)
-    
-    heur.move_up(tablero)
-    heur.move_right(tablero)
-    heur.move_up(tablero)
-    heur.move_right(tablero)
-    heur.move_right(tablero)
- 
-    print(tablero)
-    print(coordMonedas)
+      
   
 main()
