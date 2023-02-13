@@ -1,6 +1,6 @@
 import numpy as np
-
-
+import math
+import copy
 def localizarObjetivo(tablero, num):
     for x, y in zip(*np.where(tablero == num)):
         print("El elemento buscado[{}, {}] vale {}".format(x, y, tablero[x, y]))
@@ -11,13 +11,19 @@ def localizarObjetivo(tablero, num):
 class Tablero:
     """esta es la clase tablero que almacenara toda la infomracion del juego"""
 
-    def __init__(self, monedas, posicionRobotX, posicionRobotY, table, salida,coordMonedas):
-        if not monedas:
+   
+    def __init__(self, monedasNecesarias = None, posicionRobotX = None, posicionRobotY = None, table = None, salida = None
+                ,coordMonedas = None, h = 0, movimientosRealizados: list = None):
+        if not monedasNecesarias:
             return None
-        self.monedas = monedas
+        self.monedasNecesarias = monedasNecesarias
         self.posicionRobotX = posicionRobotX
         self.posicionRobotY = posicionRobotY
         self.table = table
+        self.h = h
+        self.movimientosRealizados = movimientosRealizados
+
+
 
         # agregado
         self.monedasRecogidas = 0 # contador con monedas recogidas hasta el momento dentro del tablero
@@ -40,8 +46,7 @@ def obtMonedasTab(tablero):
     return listaMonedas
 
 def movValid(tablero: Tablero, x, y):
-    if tablero.table[x, y] != 9:
-        return True
+    return tablero.table[x, y] != 9
 
 
 def hayMoneda(tablero: Tablero, x, y):
@@ -55,111 +60,168 @@ def hayMoneda(tablero: Tablero, x, y):
 
 
 def move_up(tablero: Tablero):
-    x = tablero.posicionRobotX
-    y = tablero.posicionRobotY
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
 
-    if movValid(tablero, x - 1, y):
-        exisMoneda, valorMoneda = hayMoneda(tablero, x - 1, y)
-        if (
-            exisMoneda
-        ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
-            tablero.monedasRecogidas = (
-                tablero.monedasRecogidas + valorMoneda
-            )  # modenas[1] almacena el valor
 
-        tablero.posicionRobotX = tablero.posicionRobotX - 1
-        tablero.posicionRobotY = tablero.posicionRobotY
-        tablero.table[x - 1, y] = 8
-        tablero.table[x, y] = 0
-    else:
-        print("movimineto invalido;el robot permanece quieto")
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x - 1, y)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
 
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX - 1
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY
+    nuevoEstado.table[x - 1, y] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("A")
+    return nuevoEstado
 
 def move_down(tablero: Tablero):
-    x = tablero.posicionRobotX
-    y = tablero.posicionRobotY
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
 
-    if movValid(tablero, x + 1, y):
-        exisMoneda, valorMoneda = hayMoneda(tablero, x + 1, y)
-        if (
-            exisMoneda
-        ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
-            tablero.monedasRecogidas = (
-                tablero.monedasRecogidas + valorMoneda
-            )  # modenas[1] almacena el valor
 
-        tablero.posicionRobotX = tablero.posicionRobotX + 1
-        tablero.posicionRobotY = tablero.posicionRobotY
-        tablero.table[x + 1, y] = 8
-        tablero.table[x, y] = 0
-    else:
-        print("movimineto invalido;el robot permanece quieto")
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x + 1, y)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
 
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX + 1
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY
+    nuevoEstado.table[x + 1, y] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("B")
+    return nuevoEstado
 
 def move_left(tablero: Tablero):
-    x = tablero.posicionRobotX
-    y = tablero.posicionRobotY
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
 
-    if movValid(tablero, x, y - 1):
-        exisMoneda, valorMoneda = hayMoneda(tablero, x, y - 1)
-        if (
-            exisMoneda
-        ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
-            tablero.monedasRecogidas = (
-                tablero.monedasRecogidas + valorMoneda
-            )  # modenas[1] almacena el valor
 
-        tablero.posicionRobotX = tablero.posicionRobotX
-        tablero.posicionRobotY = tablero.posicionRobotY - 1
-        tablero.table[x, y - 1] = 8
-        tablero.table[x, y] = 0
-    else:
-        print("movimineto invalido;el robot permanece quieto")
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x , y- 1)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
 
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX 
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY - 1
+    nuevoEstado.table[x , y - 1] = 8
+    nuevoEstado.table[x, y ] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("I")
+    return nuevoEstado
 
 def move_right(tablero: Tablero):
-    x = tablero.posicionRobotX
-    y = tablero.posicionRobotY
-
-    if movValid(tablero, x, y + 1):
-        exisMoneda, valorMoneda = hayMoneda(tablero, x, y + 1)
-        if (
-            exisMoneda
-        ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
-            tablero.monedasRecogidas = (
-                tablero.monedasRecogidas + valorMoneda
-            )  # modenas[1] almacena el valor
-
-        tablero.posicionRobotX = tablero.posicionRobotX
-        tablero.posicionRobotY = tablero.posicionRobotY + 1
-        tablero.table[x, y + 1] = 8
-        tablero.table[x, y] = 0
-    else:
-        print("movimineto invalido;el robot permanece quieto")
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
 
 
-def moverArriba(tablero):
-    posRobotX = tablero.posicionRobotX
-    posRobotY = tablero.posicionRobotY
-    if tablero.table[posRobotX][posRobotY - 1] == 9:
-        return tablero
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x , y+1)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
 
-    if tablero.table[posRobotX][posRobotY - 1] == 7:
-        tablero.table[posRobotX][posRobotY - 1] = 8
-        tablero.table[posRobotX][posRobotY] = 0
-        return tablero
-    if tablero.table[posRobotX][posRobotY - 1] == range(1, 6):
-        tablero.table[posRobotX][posRobotY - 1] = 8
-        tablero.table[posRobotX][posRobotY] = 0
-        return tablero
-    if tablero.table[posRobotX][posRobotY - 1] == 7:
-        tablero.table[posRobotX][posRobotY - 1] = 8
-        tablero.table[posRobotX][posRobotY] = 0
-        return tablero
-    if tablero.table[posRobotX][posRobotY - 1] == 0:
-        tablero.table[posRobotX][posRobotY - 1] = 8
-        tablero.table[posRobotX][posRobotY] = 0
-        return tablero
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX 
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY + 1
+    nuevoEstado.table[x , y +1] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("D")
+    return nuevoEstado
+        
+
+def  diag_upRight(tablero:Tablero):
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
+
+
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x-1, y+1)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX -1
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY + 1
+    nuevoEstado.table[x-1 , y +1] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("AD")
+    return nuevoEstado
+
+
+def  diag_upLeft(tablero:Tablero):
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
+
+
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x-1, y-1)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX -1
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY -1
+    nuevoEstado.table[x-1 , y -1] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("AI")
+    return nuevoEstado
+
+
+def  diag_downRight(tablero:Tablero): 
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
+
+
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x+1, y+1)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX +1
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY + 1
+    nuevoEstado.table[x+1 , y +1] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("BD")
+    return nuevoEstado  
+
+def  diag_downLeft(tablero:Tablero):   
+    nuevoEstado = copy.deepcopy(tablero)
+    
+    x = nuevoEstado.posicionRobotX
+    y = nuevoEstado.posicionRobotY
+
+
+   
+    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x+1, y-1)
+    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+
+    nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX +1
+    nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY -1 
+    nuevoEstado.table[x+1 , y -1] = 8
+    nuevoEstado.table[x, y] = 0
+    nuevoEstado.h = DistanciaManhatan(nuevoEstado)
+    nuevoEstado.movimientosRealizados.append("BI")
+    return nuevoEstado
+
 
 
 def DistanciaManhatan(tablero:Tablero):
@@ -169,4 +231,19 @@ def DistanciaManhatan(tablero:Tablero):
      #la distancia de manjatan nos dice que la distancia entre 2 putnos con coordenadas 
      #siendo p(x,y) y q(r,s) la distancia d se calcula (d(p,q))=raiz( (r-x)^2+(s-y)^2)
      #para nosotros sera la distancia del robot p a la moneda .quedando asi= d(r,m)=raiz(moneda[x]-robotX)^2+(mondeda[y]-robot`[y]^2)
-    valor = valor+abs(tablero.posicionRobotX)
+     
+    heuristica = 0
+     
+    posRobot = [tablero.posicionRobotX , tablero.posicionRobotY]
+    for moneda in tablero.coordMonedas:
+        valorX = moneda[0] - posRobot[0]
+        valorY = moneda[1] - posRobot[1]
+        heuristica = heuristica + abs(math.pow(valorX, 2) + math.pow(valorY, 2))
+    return heuristica
+
+
+def hemosTerminado (tablero: Tablero):
+    if (tablero.posicionRobotX == tablero.salida[0] and tablero.posicionRobotY == tablero.salida[1]):
+        return True
+    else:
+        return False
