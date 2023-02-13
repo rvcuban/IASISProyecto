@@ -1,6 +1,7 @@
 import numpy as np
 import FuncionesHeuristica as heur
 import BFS
+import time
 def cargarArchivo():       #falta lanzar error en caso de que el archivo no exista o no este en la carpeta 
     with open('LABECOIN1.txt','r') as f:
         monedas=next(f)
@@ -23,7 +24,6 @@ def main():
     tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida,coordMonedas,0,[])
     tablero.h = heur.DistanciaManhatan(tablero)
 
-    # Source: https://stackoverflow.com/questions/47432043
 
     print("¿Con que algoritmo quieres resolver el puzzle?")
     opcion = input("1-Escalada simple.\n2-Maxima pendiente \n 3-BFS")
@@ -34,8 +34,10 @@ def main():
         case 2:
             print("Aqui falta Maxima pendiente")
         case 3:
+            inicio=time.time()
             BFS.BFS(tablero)
-    
+            fin=time.time()
+            print(f"el timepo que ha tardado en ejecutarse BFS es {fin-inicio}")
       
   
 main()

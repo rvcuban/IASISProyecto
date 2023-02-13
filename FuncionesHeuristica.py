@@ -225,9 +225,6 @@ def  diag_downLeft(tablero:Tablero):
 
 
 def DistanciaManhatan(tablero:Tablero):
-    print("EN CONSTRUCCION")
-    
-
      #la distancia de manjatan nos dice que la distancia entre 2 putnos con coordenadas 
      #siendo p(x,y) y q(r,s) la distancia d se calcula (d(p,q))=raiz( (r-x)^2+(s-y)^2)
      #para nosotros sera la distancia del robot p a la moneda .quedando asi= d(r,m)=raiz(moneda[x]-robotX)^2+(mondeda[y]-robot`[y]^2)

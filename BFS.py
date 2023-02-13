@@ -2,6 +2,7 @@ import FuncionesHeuristica as fh
 
 def BFS (inicial:fh.Tablero):
     listaAbiertos= []
+    nodosGenerados=0
     while (not fh.hemosTerminado(inicial)):
         if fh.movValid(inicial, inicial.posicionRobotX - 1, inicial.posicionRobotY):
             listaAbiertos.append(fh.move_up(inicial))
@@ -24,7 +25,8 @@ def BFS (inicial:fh.Tablero):
         
         mejorNodo = listaAbiertos[0]
         #Recorremos la lista de abiertos para conseguir el nodo con mejor heuristica
-        
+         
+        nodosGenerados=nodosGenerados+len(listaAbiertos)
         for nodo in listaAbiertos:
             if mejorNodo.h < nodo.h:
                 mejorNodo = nodo
@@ -32,13 +34,16 @@ def BFS (inicial:fh.Tablero):
         listaAbiertos.remove(mejorNodo) 
         if (mejorNodo.h > inicial.h):
             inicial = mejorNodo
+           
         else:
             print("BFS no ha podido encontrar una solución")
             print(inicial.movimientosRealizados)
+            print(f"numero de nodos generados {nodosGenerados}")
+            print(f"Tablero Final \n {inicial.table}")
             return
 
     print(f"{inicial.table} es la solución encontrada por BFS")
-    
+    print(f"numero de nodos generados {nodosGenerados}")
 
 
 
