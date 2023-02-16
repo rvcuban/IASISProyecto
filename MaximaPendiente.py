@@ -1,9 +1,12 @@
 import FuncionesHeuristica as fh
+import time
 
-def BFS (inicial:fh.Tablero):
+def maximaPendiente(inicial:fh.Tablero):
+    inicio=time.time()
     listaAbiertos= []
     nodosGenerados=0
-    while (not fh.hemosTerminado(inicial)):
+    hemosTerminado = False
+    while (not hemosTerminado):
         if fh.movValid(inicial, inicial.posicionRobotX - 1, inicial.posicionRobotY):
             listaAbiertos.append(fh.move_up(inicial))
         if fh.movValid(inicial, inicial.posicionRobotX + 1, inicial.posicionRobotY):
@@ -12,8 +15,6 @@ def BFS (inicial:fh.Tablero):
             listaAbiertos.append(fh.move_left(inicial))
         if fh.movValid(inicial, inicial.posicionRobotX, inicial.posicionRobotY + 1):
             listaAbiertos.append(fh.move_right(inicial))
-             
- #diagonales, y javi tiene que cambiar las variables del movValid
         if fh.movValid(inicial, inicial.posicionRobotX +1, inicial.posicionRobotY - 1):
             listaAbiertos.append(fh.diag_downLeft(inicial))     
         if fh.movValid(inicial, inicial.posicionRobotX + 1, inicial.posicionRobotY + 1):
@@ -27,24 +28,31 @@ def BFS (inicial:fh.Tablero):
         #Recorremos la lista de abiertos para conseguir el nodo con mejor heuristica
          
         nodosGenerados=nodosGenerados+len(listaAbiertos)
+        
         for nodo in listaAbiertos:
-            if mejorNodo.h < nodo.h:
+            if mejorNodo.h > nodo.h:
                 mejorNodo = nodo
 
-        listaAbiertos.remove(mejorNodo) 
-        if (mejorNodo.h > inicial.h):
+        listaAbiertos.clear()
+        if (mejorNodo.h < inicial.h):
             inicial = mejorNodo
-           
-        else:
+        else: 
             print("BFS no ha podido encontrar una solución")
-            print(inicial.movimientosRealizados)
-            print(f"numero de nodos generados {nodosGenerados}")
-            print(f"Tablero Final \n {inicial.table}")
-            return
+            print(f"La solucion de este tablero es {inicial.movimientosRealizados}")
+            break
 
-    print(f"{inicial.table} es la solución encontrada por BFS")
+        if (fh.hemosTerminado(inicial)):
+            hemosTerminado = True
+
+    fin=time.time()
+
+    if(hemosTerminado):      
+        print(f"Las monedas recogidas son {inicial.monedasRecogidas}")
+        print(f"La solucion de este tablero es {inicial.movimientosRealizados}")
+        print(f"Tablero Final \n {inicial.table}")
+        
     print(f"numero de nodos generados {nodosGenerados}")
-
+    print(f"el timepo que ha tardado en ejecutarse BFS es {fin-inicio}")
 
 
 
