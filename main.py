@@ -1,12 +1,14 @@
 import numpy as np
 import FuncionesHeuristica as heur
-import BFS
+import MaximaPendiente
 import time
-def cargarArchivo():       #falta lanzar error en caso de que el archivo no exista o no este en la carpeta 
-    with open('LABECOIN1.txt','r') as f:
-        monedas=next(f)
-        datos = ''.join(f.readlines()).replace('\n',';')
+import EscaladaSimple as ES
+def cargarArchivo():      #falta lanzar error en caso de que el archivo no exista o no este en la carpeta 
+    with open('Tableros/LABECOIN2.txt','r') as f:
+        monedas=int(next(f))
+        datos = ''.join(f.readlines()).replace('\n',';').strip(';')
     m = np.matrix(datos)
+    
 
     return (m,monedas)
  
@@ -16,28 +18,29 @@ def main():
     labecoin,monedas = cargarArchivo()  #tenemos el mata y el numero de modenas 
     #despues de cargar el archivo vamos a localizar la posicion de los elementos y crearel tablero
     print("ESTE ES EL MAPA QUE SE VA A RESOLVER")
-    print(f"El numero de monedas es {monedas}")
+    
     print(labecoin)
     posRobot=heur.localizarObjetivo(labecoin, 8) 
     salida =heur.localizarObjetivo(labecoin,7)
     coordMonedas= heur.obtMonedasTab(labecoin)
     tablero = heur.Tablero(monedas, posRobot[0],posRobot[1], labecoin,salida,coordMonedas,0,[])
     tablero.h = heur.DistanciaManhatan(tablero)
+    print(f"El numero de monedas es {tablero.monedasNecesarias}")
 
 
     print("¿Con que algoritmo quieres resolver el puzzle?")
-    opcion = input("1-Escalada simple.\n2-Maxima pendiente \n 3-BFS")
+    opcion = input("1-Escalada simple.\n2-Maxima pendiente \n3-BFS \n")
 
     match int(opcion):
         case 1:
-            escaladaSimple()
+            inicio=time.time()
+            ES.EscaladaSimple(tablero)
+            fin=time.time()
+            print(f"el timepo que ha tardado en ejecutarse BFS es {fin-inicio}")
         case 2:
             print("Aqui falta Maxima pendiente")
         case 3:
-            inicio=time.time()
-            BFS.BFS(tablero)
-            fin=time.time()
-            print(f"el timepo que ha tardado en ejecutarse BFS es {fin-inicio}")
+            MaximaPendiente.maximaPendiente(tablero)
       
-  
+    
 main()

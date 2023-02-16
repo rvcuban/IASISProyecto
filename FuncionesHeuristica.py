@@ -1,6 +1,9 @@
 import numpy as np
 import math
 import copy
+
+valorMoneda = 0
+
 def localizarObjetivo(tablero, num):
     for x, y in zip(*np.where(tablero == num)):
         print("El elemento buscado[{}, {}] vale {}".format(x, y, tablero[x, y]))
@@ -12,8 +15,8 @@ class Tablero:
     """esta es la clase tablero que almacenara toda la infomracion del juego"""
 
    
-    def __init__(self, monedasNecesarias = None, posicionRobotX = None, posicionRobotY = None, table = None, salida = None
-                ,coordMonedas = None, h = 0, movimientosRealizados: list = None):
+    def __init__(self, monedasNecesarias = 0, posicionRobotX = None, posicionRobotY = None, table = None, salida = None
+                ,coordMonedas = None, h = 0, movimientosRealizados: list = None, monedasRecogidas = 0):
         if not monedasNecesarias:
             return None
         self.monedasNecesarias = monedasNecesarias
@@ -26,7 +29,7 @@ class Tablero:
 
 
         # agregado
-        self.monedasRecogidas = 0 # contador con monedas recogidas hasta el momento dentro del tablero
+        self.monedasRecogidas = monedasRecogidas # contador con monedas recogidas hasta el momento dentro del tablero
         self.salida = salida
         self.coordMonedas= coordMonedas #lista de las coordenadas de las monedas dentro de la matriz 
 
@@ -37,7 +40,6 @@ class Tablero:
 def obtMonedasTab(tablero):
     listaMonedas=[]
     dim = len(tablero)  # Es una matriz cuadrada N x N
-    print(tablero[1,1])
     for i in range(0, dim):  # columna
         for j in range(0, dim):  # fila
             if (tablero[i,j]>=1) and (tablero[i,j]<7):
@@ -50,10 +52,11 @@ def movValid(tablero: Tablero, x, y):
 
 
 def hayMoneda(tablero: Tablero, x, y):
-    if tablero.table[x, y] < 7:
+    global valorMoneda
+    if tablero.table[x, y] < 7 and tablero.table[x, y] != 0:
         valorMoneda = tablero.table[x, y]
         m = True
-        return (m, valorMoneda)
+        return m
     else:
         m = False
         return m
@@ -65,11 +68,11 @@ def move_up(tablero: Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x - 1, y)
-    if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
-            nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+    coorMov = (x - 1, y)
+    exisMoneda= hayMoneda(nuevoEstado, x - 1, y)
+    if (exisMoneda):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
+        nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+        nuevoEstado.coordMonedas.remove(coorMov) 
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX - 1
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY
@@ -85,11 +88,12 @@ def move_down(tablero: Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x + 1, y)
+    
+    coorMov = (x + 1, y)
+    exisMoneda= hayMoneda(nuevoEstado, x + 1, y)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov)
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX + 1
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY
@@ -105,11 +109,11 @@ def move_left(tablero: Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x , y- 1)
+    coorMov = (x, y-1)
+    exisMoneda= hayMoneda(nuevoEstado, x, y - 1)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov) 
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX 
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY - 1
@@ -125,11 +129,11 @@ def move_right(tablero: Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x , y+1)
+    coorMov = (x, y + 1)
+    exisMoneda= hayMoneda(nuevoEstado, x, y + 1)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov) 
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX 
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY + 1
@@ -147,10 +151,11 @@ def  diag_upRight(tablero:Tablero):
     y = nuevoEstado.posicionRobotY
 
 
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x-1, y+1)
+    coorMov = (x - 1, y + 1)
+    exisMoneda= hayMoneda(nuevoEstado, x - 1, y + 1)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov) 
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX -1
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY + 1
@@ -167,11 +172,11 @@ def  diag_upLeft(tablero:Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x-1, y-1)
+    coorMov = (x - 1, y - 1)
+    exisMoneda= hayMoneda(nuevoEstado, x - 1, y - 1)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov) 
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX -1
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY -1
@@ -188,11 +193,11 @@ def  diag_downRight(tablero:Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x+1, y+1)
+    coorMov = (x + 1, y + 1)
+    exisMoneda= hayMoneda(nuevoEstado, x + 1, y + 1)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov) 
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX +1
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY + 1
@@ -208,11 +213,12 @@ def  diag_downLeft(tablero:Tablero):
     x = nuevoEstado.posicionRobotX
     y = nuevoEstado.posicionRobotY
 
-
-   
-    exisMoneda, valorMoneda = hayMoneda(nuevoEstado, x+1, y-1)
+    coorMov = (x + 1, y - 1)
+    exisMoneda= hayMoneda(nuevoEstado, x + 1, y - 1)
     if (exisMoneda ):  # monedas de 0 almacena true o false para saber si hay moneda en la casilla que nos movemos
             nuevoEstado.monedasRecogidas = ( nuevoEstado.monedasRecogidas + valorMoneda )  # modenas[1] almacena el valor
+            nuevoEstado.coordMonedas.remove(coorMov)
+            
 
     nuevoEstado.posicionRobotX =nuevoEstado.posicionRobotX +1
     nuevoEstado.posicionRobotY =nuevoEstado.posicionRobotY -1 
@@ -232,10 +238,14 @@ def DistanciaManhatan(tablero:Tablero):
     heuristica = 0
      
     posRobot = [tablero.posicionRobotX , tablero.posicionRobotY]
-    for moneda in tablero.coordMonedas:
-        valorX = moneda[0] - posRobot[0]
-        valorY = moneda[1] - posRobot[1]
-        heuristica = heuristica + abs(math.pow(valorX, 2) + math.pow(valorY, 2))
+    if tablero.monedasRecogidas < int(tablero.monedasNecesarias):
+        for moneda in tablero.coordMonedas:
+            valorX = moneda[0] - posRobot[0]
+            valorY = moneda[1] - posRobot[1]
+            heuristica = heuristica + math.sqrt(math.pow(valorX, 2) + math.pow(valorY, 2) + math.pow(tablero.salida[0] - moneda[0],2) + math.pow(tablero.salida[1] - moneda[1],2))
+    else:
+        heuristica = math.sqrt(math.pow(tablero.posicionRobotX - tablero.salida[0],2) + math.pow(tablero.posicionRobotY - tablero.salida[1],2))
+    
     return heuristica
 
 
@@ -244,3 +254,5 @@ def hemosTerminado (tablero: Tablero):
         return True
     else:
         return False
+
+
