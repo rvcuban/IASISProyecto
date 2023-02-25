@@ -3,8 +3,9 @@ import FuncionesHeuristica as heur
 import MaximaPendiente
 import time
 import EscaladaSimple as ES
+import AStar as A
 def cargarArchivo():      #falta lanzar error en caso de que el archivo no exista o no este en la carpeta 
-    with open('Tableros/LABECOIN2.txt','r') as f:
+    with open('Tableros/LABECOIN5.txt','r') as f:
         monedas=int(next(f))
         datos = ''.join(f.readlines()).replace('\n',';').strip(';')
     m = np.matrix(datos)
@@ -16,7 +17,7 @@ def cargarArchivo():      #falta lanzar error en caso de que el archivo no exist
 def main():
     print("LABECOIN")
     labecoin,monedas = cargarArchivo()  #tenemos el mata y el numero de modenas 
-    #despues de cargar el archivo vamos a localizar la posicion de los elementos y crearel tablero
+    #despues de cargar el archivo vamos a localizar la posicion de los elementos y crear el tablero
     print("ESTE ES EL MAPA QUE SE VA A RESOLVER")
     
     print(labecoin)
@@ -29,7 +30,7 @@ def main():
 
 
     print("¿Con que algoritmo quieres resolver el puzzle?")
-    opcion = input("1-Escalada simple.\n2-Maxima pendiente \n3-BFS \n")
+    opcion = input("1-Escalada simple.\n2-AStar \n3-BFS \n")
 
     match int(opcion):
         case 1:
@@ -38,7 +39,7 @@ def main():
             fin=time.time()
             print(f"el timepo que ha tardado en ejecutarse BFS es {fin-inicio}")
         case 2:
-            print("Aqui falta Maxima pendiente")
+            A.AStar(tablero)
         case 3:
             MaximaPendiente.maximaPendiente(tablero)
       
