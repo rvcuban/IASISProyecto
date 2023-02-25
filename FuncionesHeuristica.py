@@ -272,8 +272,17 @@ def hemosTerminado (tablero: Tablero):
     else:
         return False
     
-def tablerosIguales (inicial:Tablero, nuevoTablero:Tablero):
-     return np.array_equal(inicial.table,nuevoTablero.table)
+def tablerosIguales(inicial:Tablero, nuevoTablero:Tablero):
+     
+     return 
+
+def estaEnLista(nodo : Tablero, listaAbiertos):
+    for nodoA in listaAbiertos:
+          if(np.array_equal(nodo.table,nodoA.table)):
+               return True
+    
+    return False
+
 
 
      
