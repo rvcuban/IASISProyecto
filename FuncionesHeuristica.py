@@ -16,7 +16,7 @@ class Tablero:
 
    
     def __init__(self, monedasNecesarias = 0, posicionRobotX = None, posicionRobotY = None, table = None, salida = None
-                ,coordMonedas = None, h = 0, movimientosRealizados: list = None, monedasRecogidas = 0):
+                ,coordMonedas = None, h = 0, movimientosRealizados: list = None, monedasRecogidas = 0, g : int = 0, f : int = 0):
         if not monedasNecesarias:
             return None
         self.monedasNecesarias = monedasNecesarias
@@ -25,7 +25,8 @@ class Tablero:
         self.table = table
         self.h = h
         self.movimientosRealizados = movimientosRealizados
-
+        self.g = g
+        self.f = f
 
 
         # agregado
@@ -80,6 +81,8 @@ def move_up(tablero: Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("A")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
 
 def move_down(tablero: Tablero):
@@ -101,6 +104,8 @@ def move_down(tablero: Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("B")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
 
 def move_left(tablero: Tablero):
@@ -121,6 +126,8 @@ def move_left(tablero: Tablero):
     nuevoEstado.table[x, y ] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("I")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
 
 def move_right(tablero: Tablero):
@@ -141,6 +148,8 @@ def move_right(tablero: Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("D")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
         
 
@@ -163,6 +172,8 @@ def  diag_upRight(tablero:Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("AD")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
 
 
@@ -184,6 +195,8 @@ def  diag_upLeft(tablero:Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("AI")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
 
 
@@ -205,6 +218,8 @@ def  diag_downRight(tablero:Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("BD")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado  
 
 def  diag_downLeft(tablero:Tablero):   
@@ -226,6 +241,8 @@ def  diag_downLeft(tablero:Tablero):
     nuevoEstado.table[x, y] = 0
     nuevoEstado.h = DistanciaManhatan(nuevoEstado)
     nuevoEstado.movimientosRealizados.append("BI")
+    nuevoEstado.g = len(nuevoEstado.movimientosRealizados)
+    nuevoEstado.f = nuevoEstado.g + nuevoEstado.h
     return nuevoEstado
 
 
@@ -250,9 +267,15 @@ def DistanciaManhatan(tablero:Tablero):
 
 
 def hemosTerminado (tablero: Tablero):
-    if (tablero.posicionRobotX == tablero.salida[0] and tablero.posicionRobotY == tablero.salida[1]):
+    if (tablero.posicionRobotX == tablero.salida[0] and tablero.posicionRobotY == tablero.salida[1] and (tablero.monedasRecogidas >= tablero.monedasNecesarias)):
         return True
     else:
         return False
+    
+def tablerosIguales (inicial:Tablero, nuevoTablero:Tablero):
+     return np.array_equal(inicial.table,nuevoTablero.table)
+
+
+     
 
 
