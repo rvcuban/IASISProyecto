@@ -39,9 +39,9 @@ def AStar(inicial:fh.Tablero):
 
         if fh.movValid(inicial, inicial.posicionRobotX - 1, inicial.posicionRobotY + 1) and (fh.diag_upRight not in listaCerrados):
             listaVecinos.append(fh.diag_upRight(inicial))
-
+        
         for nodoVecino in listaVecinos:
-            if (nodoVecino not in listaAbiertos):
+            if (not fh.estaEnLista(nodoVecino,listaAbiertos) and (not fh.estaEnLista(nodoVecino,listaCerrados))):
                 listaAbiertos.append(nodoVecino)
             else:
                 
@@ -61,7 +61,7 @@ def AStar(inicial:fh.Tablero):
         listaCerrados.append(mejorNodo)
         
         if (len(listaAbiertos) == 0):
-            
+
             listaAvacia = True
         
         inicial = mejorNodo

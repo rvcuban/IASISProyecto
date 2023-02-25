@@ -5,7 +5,7 @@ import time
 import EscaladaSimple as ES
 import AStar as A
 def cargarArchivo():      #falta lanzar error en caso de que el archivo no exista o no este en la carpeta 
-    with open('Tableros/LABECOIN5.txt','r') as f:
+    with open('Tableros/LABECOIN10.txt','r') as f:
         monedas=int(next(f))
         datos = ''.join(f.readlines()).replace('\n',';').strip(';')
     m = np.matrix(datos)
